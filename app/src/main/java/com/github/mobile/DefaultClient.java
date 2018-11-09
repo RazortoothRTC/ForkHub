@@ -63,6 +63,10 @@ public class DefaultClient extends GitHubClient {
         // generally, and what to do about the fact this connection has several
         // new ways it can throw an exception, instead of burrying the fault of KeyManagementException or
         // NoSuchAlgorithmException
+        //
+        // In terms of adding a switch to check for a version range between kitkat and the last version where
+        // this problem exists before it is fixed by default
+        // if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) { is a good start
         try {
                 // NOTE: The deprecated signature below for sslSocketFactory()
                 // will always result in an "unable to extract trust manager, IllegalStateException"
