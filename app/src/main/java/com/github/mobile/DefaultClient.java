@@ -65,6 +65,7 @@ public class DefaultClient extends GitHubClient {
         // NoSuchAlgorithmException
         try {
                 // NOTE: The deprecated signature below for sslSocketFactory()
+                // will always result in an "unable to extract trust manager, IllegalStateException"
                 // final OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(new TLSSocketFactory()).build();
 
                 // public OkHttpClient.Builder sslSocketFactory(SSLSocketFactory sslSocketFactory,
@@ -84,7 +85,5 @@ public class DefaultClient extends GitHubClient {
                 e.printStackTrace();
                 throw new IOException(e.getMessage());
             }
-        // URL url = new URL(createUri(uri));
-        // return factory.open(url);
     }
 }
