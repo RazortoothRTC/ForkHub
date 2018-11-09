@@ -20,6 +20,13 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import okhttp3.OkUrlFactory;
@@ -50,8 +57,34 @@ public class DefaultClient extends GitHubClient {
      */
     @Override
     protected HttpURLConnection createConnection(String uri) throws IOException {
-        OkUrlFactory factory = new OkUrlFactory(new OkHttpClient());
-        URL url = new URL(createUri(uri));
-        return factory.open(url);
+        // OkUrlFactory factory = new OkUrlFactory(new OkHttpClient());
+        //
+        // TODO: Look through code base to explore how project handles exceptions
+        // generally, and what to do about the fact this connection has several
+        // new ways it can throw an exception, instead of burrying the fault of KeyManagementException or
+        // NoSuchAlgorithmException
+        try {
+                // NOTE: The deprecated signature below for sslSocketFactory() 
+                // final OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(new TLSSocketFactory()).build();
+
+                // public OkHttpClient.Builder sslSocketFactory(SSLSocketFactory sslSocketFactory,
+                //                                             X509TrustManager trustManager)
+                TrustManager[] trustManagers = new TrustManager[] { new TrustManagerManipulator() };
+
+                SSLContext context = SSLContext.getInstance("TLS");
+                context.init(null, trustManagers, new SecureRandom());
+                final OkHttpClient client2 = new OkHttpClient.Builder().sslSocketFactory(new TLSSocketFactory(context.getSocketFactory()), (X509TrustManager) trustManagers[0]).build();
+                URL url = new URL(createUri(uri));
+                OkUrlFactory factory = new OkUrlFactory(client2);
+                return factory.open(url);
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+                throw new IOException(e.getMessage());
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                throw new IOException(e.getMessage());
+            }
+        // URL url = new URL(createUri(uri));
+        // return factory.open(url);
     }
 }
