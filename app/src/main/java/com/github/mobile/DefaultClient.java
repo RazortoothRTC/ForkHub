@@ -64,7 +64,7 @@ public class DefaultClient extends GitHubClient {
         // new ways it can throw an exception, instead of burrying the fault of KeyManagementException or
         // NoSuchAlgorithmException
         try {
-                // NOTE: The deprecated signature below for sslSocketFactory() 
+                // NOTE: The deprecated signature below for sslSocketFactory()
                 // final OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(new TLSSocketFactory()).build();
 
                 // public OkHttpClient.Builder sslSocketFactory(SSLSocketFactory sslSocketFactory,
